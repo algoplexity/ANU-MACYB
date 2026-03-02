@@ -1,0 +1,748 @@
+# DiscoveringHiddenStructuresinStockMarketDatausing
+
+# AlgorithmicGenerativeModeling
+
+## YeuWenMak
+
+## yeuwen.mak@u.nus.edu
+
+## Abstract
+
+_Thispaperdemonstratesusingelementarycellularautomata(ECA)tomodelobserved
+(O) stockmarketdatabygenerating(G)candidatedatamatchedusingatwo-phase
+geneticalgorithm (GA).The Odatacomprisesencodedpricechangeinformationfor
+selectedstocks.Inthefirstphase,GAselectsrows/columnstocompressOandGarrays
+usingminimalinformationlossselection(MILS).ThesecondphaseappliesGAtoidentify
+optimal ECA rules that minimize the algorithmic information distance between
+compressedOandG.Causaldecompositiontechniquesarethenusedtobreakdownthe
+emergentcomplexityofthebest-matchingECArulesintomodularcomponentsgoverning
+stockdependencies.Analyzingthesemodularinteractionsprovidesinsightsintohidden
+structures driving market relationships. Quantifying model fit and information
+preservationvalidatestheECAmodellingapproachcoupledwithcausaldecomposition.
+Elementarycellularautomatageneratedbysinglerule(131)anddoublerulepair(35,
+115)werefoundtobetheclosestmatchtotherealmarketdata._
+
+**_Keywords:_** _Algorithmic Complexity, Elementary Cellular Automata, Lossy
+Compression,GeneticAlgorithm,HighOrderDependencies_
+
+## 1.Introduction
+
+We know (Zeniland Delahaye4), (Brandouy etal. 9) that, despite the apparent
+randomnessofthestockmarket,itmaybeconsideredarule-basedalgorithmicmachine,
+notunlikeagiantcellularautomaton(Wolfram431)andthatcomputationalmethodssuch
+asalgorithmicprobabilitymaybeusefulforanalysingandpredictingmarketbehavior.
+Computational methods such as causal decomposition could uncover the elemental
+mechanismsgoverningcomplexdependencies betweenstocks.Thisinvolvesbreaking
+down emergentcomplexity intomodularrulecomponentsdrivingrelationshipsusing
+techniquestailoredforcellularautomatasystems.
+
+Currentmethodsforstudyingmarketbehaviourrelyonstatisticalmethodsorstochastic
+modelswhenalgorithmictechniquesareabletocopewithcomplexsystemsandspurious
+correlationsinbigdatabetterascomparedtocorrelationandregressionmethods(Zenil
+23)(Matejkaetetal.1). Also,separately,(Mansilla4)and(Brandouyetal.8)estimated
+thealgorithmiccomplexityoffinancialdatatodetecthiddenstructuresandavoidfocusing
+onnon-profitablepatterns.
+
+Although literature has shown financial data complexity can be measured via
+algorithmicinformationtheory,thishasnotbeenestablishedforhigherdimensionaldata
+capableof capturingcomplex high-order dependencies that arisedue tofactorslike
+feedbackloops,nonlinearinteractions,andlong-termmemoryeffectsastheyevolveover
+time. Thispaper introduces aninnovativealgorithmicgenerativemodelingtechnique
+using cellular automata coupled withcausal decomposition toaddress thisgap. By
+matching generated multi-dimensional data to real financial data on algorithmic
+informationmetrics,theapproachcanuncoverhiddenstructuresneglectedbytraditional
+techniqueslimitedinmodelingcomplexdependencies.
+
+Itisourhypothesisthatifwerepresentastockpricechangebyaseriesof0sand1sas
+astringof binarysequenceforagroupofstocks forwhichtheirrelationshipsareof
+
+
+interestanduseitasaninitialcellconfigurationofacellularautomaton,wecanobserve
+patternsintheirevolutionovertime.Thiscanbeachievedbyafamilyofalgorithmsbased
+on algorithmic probability and information theory that can minimize the loss of
+algorithmicinformation andavoid certain distortions that occurinotherapproaches,
+making them useful for studying complexdatasets like stocks dependencies. These
+algorithms can help us understand the patterns and rules that govern high order
+dependenciesbetweenstocks. Theycanalsobe usedfordimensionreduction,feature
+selection, and network sparsification while minimizing the loss of algorithmic
+information.(Zeniletal.17)
+
+**1.1.GoalsandObjectives**
+
+Theoverallgoalistoapplyandextendthealgorithmicframework(Brandouyetal.
+341)pioneeredbyZeniltofinancialtimeseriesanalysisinordertouncoverandanalyze
+complexnonlineardependenciesinstockmarketdataneglectedbytraditionalmodels.
+The approach combines elementary cellular automata with genetic algorithms and
+selected algorithms for preserving algorithmic information fordimension reduction,
+featureselection,andmorewhenstudyingcomplexdatasetslikestocks.
+
+```
+Theobjectivesoftheprojectareto:
+```
+1. Applysemi-computablealgorithms(Zeniletal.17),whichbalancecomputability
+    andcomplexity, toanalyzeencodedstockmarketdata.Usingthesealgorithms
+    helpspreservekeycomputableproperties.
+2. Minimizethelossofalgorithmicinformation(Zeniletal.17)whenprocessing
+    theencodedfinancialtimeseriesdata.Thisiscrucialforavoidingdistortions.
+3. Validatecellularautomata(Zeniletal.23)asanalgorithmicgenerativemodelby
+    minimizingthe algorithmicinformationdistancebetweensimulatedstockdata
+    andrealmarketdata.Thiswillhelpanalyzecomplexstockdependenciesbetween
+    multipleco-evolvingstocks,neglectedbytraditionalmethodslimitedinmodeling
+    emergentcomplexity.
+4. Uncovernewinsightsintothepatternsandrulesgoverningcomplexrelationships
+    instock data based (Zenilet al.16) byleveraging causal decompositionto
+    providemechanisticfinancialinsightsfromemergingpatterns.
+
+## 2.LiteratureReview
+
+Today’s financial engineering rests on probabilistic or stochastic and statistical
+foundation,almosttothecompleteexclusionofitsalgorithmicfootprint. Twocommon
+assumptions from statistical analysis are that market prices followa randomwalk,
+resultinginlog-normalpricedistributionsandthatmarketissoefficientthatallrelevant
+informationaboutastock,suchasitsfinancialperformance,industrytrendsandeconomic
+indicators,is already reflected inits current price accordingtotheEfficientMarket
+Hypothesis and its link to information theory pioneered by Shannon. However,
+algorithmic features such as simplicity, interpretability, generalizability, causality,
+composalityetccopebetterwithcomplexsystemsthanstatisticalfeaturesderivedfrom
+potentiallyspuriouscorrelationandregressiontechniques(Zenil23).
+
+Wewillbeginaliteraturereviewoftheapplicationofalgorithmicinformationtheoryto
+thestudyoffinancialmarketsbylookingattheworksofHectorZenilprimarily,who
+haveappliedtheconceptofalgorithmicprobabilitydevelopedbyRaySolomonoffintoa
+methodtomeasurethealgorithmiccomplexity(discovered independentlybyGregory
+Chaitin,RaySolomonoffandAndreyKolmogorovin1960s)ofstringsnamedtheBlock
+DecompositionMethodbasedontheCoding TheoremMethod(Zeniletal.15). Ina
+paper he co-authored with Jean-Paul Delahaye, titled “an algorithmic
+information-theoreticapproachtothe behaviouroffinancialmarkets”,2010,theyfirst
+
+
+proposedthatthemarkethasalgorithmicstructure(ZenilandDelahaye22)ratherthan
+purerandomnessandthatalgorithmiccomplexityandprobability(ZenilandDelahaye2)
+couldprovideapowerfulsetoftoolsforquantifyingtheinformationcontentofpricesand
+maybe abletoexplainsomeofthe deviationsfromstochastic financialmodels.The
+authorsproposedthat Levin’suniversaldistribution(ZenilandDelahaye2),basedon
+algorithmicprobability,couldbeusedasanoptimalpriordistributionforpredictingprice
+movementsifmarketshaveanalgorithmiccomponent.Theytestedtheirhypothesisby
+generatingartificialalgorithmicmarketdataandcomparingittorealmarketdatainterms
+oftheir respectivefrequencydistributions.Thisallowedthemtocalculatecorrelation
+coefficientsbetweenthetwodistributionsfordifferentsequencelengths,revealingweak
+tomoderatecorrelations.Specifically(ZenilandDelahaye16):
+
+```
+● Forsequencelengths4-7days,thecorrelationsweregenerallyweak(<0.3)and
+● Forlengths8-10days,somecorrelationsbecamemoderatelystrong(upto0.7).
+```
+Inanotherpaperheco-authoredwithOlivierBrandouy,Jean-PaulDelahayeandLin
+Ma,titled“Algorithmiccomplexityoffinancialmotions”,2012,theauthorsshowedthat
+financialreturnsexhibitsomedegree ofcomplexityandpredictabilitybeyondrandom
+strings.Theyadvocatedan algorithmicinformation-theoreticframeworkforexploring
+marketdynamicswithoutassumingaparticularstochasticprocess.Theauthorsproposed
+usingcompressionratesasageneralindicatorofrandomnessandinformationcontentin
+financialtimeseries.Theyshowedthatthisapproachcandetectpatternsbeyondvolatility
+clusters. They alsodemonstrated how algorithmicprobability concepts can provide
+insightsintodeviationsfromlog-normalpricemovements,linkingittoanalgorithmic
+componentinthemarket. Byrunningmanysimpleprogramsandthusapproximating
+algorithmicprobabilityof timeseries,withthe assumptionthatpatternsarerelatively
+likely be produced by simple processes andthat theyare relatively unlikelyto be
+producedbycomplexprocesses,theauthorsareabletodetectdifferenttypesofpatterns
+andregularitiesusingaholistic,non-parametricmeasureofitscomplexity.Theirfindings
+result ina proposed generic algorithmicframework asanalternative toprobabilistic
+approachesforthestudyoffinancialdata.Ithastwokeycomponents:
+
+1.Usingcompressionratesasanindicatoroffinancialrandomness,complexityand
+thereforeinformationcontent.
+
+2.Analyzingthe"algorithmiccomponent"ofmarketdatausingalgorithmicprobability
+concepts andcomparing marketdata distributions tothose produced by algorithmic
+processes.
+
+Yet another innovative paper co-authored with the same authors above, titled
+"Estimatingthealgorithmiccomplexityofstockmarkets",2015,theauthorsdevelopeda
+morerobust methodtoestimatealgorithmiccomplexity offinancialtimeseries,used
+iterative procedures to remove obvious patterns and expose subtler structures,
+demonstrateddetectingpatternsnotrevealedbystatisticaltestsandprovidedageneral
+algorithmicframeworkforanalyzingmarketdata vs.EMH.Theauthors showedthat
+algorithmicinformationtheoryandspecificallyalgorithmiccomplexityandprobability
+canbeusefulforidentifyingareasofregularityorrandomnessinmarketdatainthe
+followingways:
+
+```
+● Algorithmiccomplexity:
+● The algorithmic complexity of a string provides a measure of its
+informationcontent - simple repeatingpatterns havelowcomplexity,
+whilerandomstringshavehighcomplexity.
+● Byestimatingthealgorithmiccomplexityof segmentsofmarketdata
+usingcompressionalgorithms,onecandetectareasoflowcomplexity
+```
+```
+3
+```
+
+that exhibit regular patterns vs. high complexity suggestive of
+randomness.
+● Applyinga"regularityerasingprocedure"iterativelyonecanalsoexpose
+pocketsoforderorchaos.
+● Algorithmicprobability:
+● Algorithmicprobability indicates the expected probability of astring
+beinggeneratedbyarandomprogram.
+● Strings with high probability have low complexity, as they can be
+producedbyshortprograms.
+● By approximating algorithmic probability on market data, one can
+identify sequences that deviate significantly from random chance,
+suggestingstructuralcauses.
+● Segments of data that violate algorithmic probability bounds could
+indicatenon-randomprocessesgeneratinglocalpocketsoforder.
+Thisimpliesthatthebehavioroffinancialmarketscanbeunderstoodthroughthelens
+ofalgorithmiccomplexityandprobability.
+
+Lastbutnotleast,inthespaceofalgorithmicinformationtheory,duetothelimited
+timeandscopeofthiscapstone,wereviewarecentpaperco-authoredbyNarsisA.Kiani,
+AlyssaAdams, Felipe S. Abrahão,Antonio Rueda-Toicen, Allan A.Zea andJesper
+Tegnér, titled "Minimal Algorithmic Information Loss Methods For Dimension
+Reduction,FeatureSelectionAndNetworkSparsification",inwhichtheauthorsshoweda
+waytoidentifyinformationcontentandredundantcomponents,furtherreinforcingwhat
+is already known in the literature that algorithmic complexity such as the Block
+DecompositionMethod(BDM)cancapturenon-statistical,computationalfeaturesmissed
+byothermethods.Whiletheworkismostlytheoretical,itdemonstrateditspotentialin
+causaldiscovery,informationdynamics,anddimensionalityreduction.
+
+WecompleteourliteraturereviewwithakeyfindingbyRiedelandZenil(2018)in
+“Rule Primality, Minimal Generating Sets, Turing-Universality and Causal
+DecompositioninElementaryCellularAutomata.”whodemonstratednoveltechniques
+forcausaldecompositionandrulediscoveryinelementarycellularautomata(ECA).The
+authorsintroducedconceptssuchasprimeandcompositerulesinECA,andfoundnew
+combinatorialrules that areTuringuniversal.Theyalsoidentifiedcandidateminimal
+rulesetscapableofgeneratingthefullECArulespaceunderBooleancomposition.This
+work has direct relevance for the current study, as it provides a framework for
+understanding howsimplelow-complexityrules caninteractandcombinetoproduce
+emergentcomplexityincellularautomatamodels.AsthisstudyproposesusingECAas
+analgorithmicgenerativemodelforfinancialtimeseries,RiedelandZenil'smethodsfor
+causal decomposition and rule discovery could offer insights into the underlying
+mechanisms driving complex market dynamics. Specifically, the idea of prime or
+compositerulescouldbeappliedtodetermineifthekeydriversofstockdependenciesare
+basedonafewcoreinteractions.Findingsmallrulesetsthatarecapableofuniversally
+generating market patterns could reveal fundamental processes governing systemic
+behavior.Theprime/compositerulenotions alignwellwithdecomposingECAmodel
+complexity into causal drivers of stock relationships. Riedel and Zenil’s causal
+decompositiontechniques offer guidingprinciplesforanalyzingmodularcomponents
+governing systemic behaviors. Their workdemonstrates howdecomposing emergent
+structuresinto simple interaction rules enables understanding the buildingblocks of
+complexity.
+
+Theexistingresearch, includingthe papersanalyzedinthisdiscussion,haslargely
+focusedon analyzing individualstock pricemovementsthroughanalgorithmiclens.
+Currentmethodsforstudyingstockdependenciesrelyonstatisticalmethodsorstochastic
+models. Networkscienceapproachesonlycapturestaticcorrelations,whileeconometric
+models make strong assumptions about linearity and independence. Algorithmic
+
+
+informationtheory offersadifferentlensthatcouldprovidenewinsights. Thispaper
+proposes a new way tomodel and visualize marketdynamics using concepts from
+computationalsystemstheory. Byextendingthegenericalgorithmicframeworktothe
+studyofcross-sectionalandhigh-orderdependenciesbetweenstocks,itcouldrevealnew
+types ofpatterns and relationshipsin price data that othermethods maymiss,thus
+providingacomplementary perspective. Inthisway, itrelatestogrowinginterestin
+econophysicsandinterdisciplinaryapproachestothestudyoffinancialmarkets.
+
+Withinthecontextof themulti-disciplinaryfieldofquantitativefinance,thispaper
+extendsthe existingliteratureonalgorithmiccomplexityanalysisoffinancialdata. It
+bringsinmodelingtoolsfromcomplexsystemssuchascellularautomataasoneofmany
+algorithmic generative models of the framework andconnects computer science to
+economics. Anovelfeatureofthispaperistheideaofmarketsasdrivenbyrule-based
+agentsandadaptiveprocesses,ratherthanpurerandomness.
+
+Theuniquevaluepropositionofthisempiricalstudyare:
+● Whereastraditionalmodelsmakeassumptionsaboutefficiencyordistributions,
+thisstudyprovidesamodel-freevisualization.
+● Whilestatisticaltestshavelimitsindetectingsubtleorhigher-orderpatterns,the
+space-timediagramsmaysurfacenewstructures.
+● ModellingthejointevolutionofmultipleassetswithECAisnovelandcaptures
+cross-sectionaldependenciesneglectedbyconventionalmethods.
+● Decomposing the emergent complexity into modular rules governing local
+interactions is madepossiblebycausal decompositiontechniquestailoredfor
+ECAsystems.
+● Thestudy leveragesafamilyofsemi-computablealgorithmsthatspecifically
+target the preservation of computable properties (hence both statistical and
+algorithmic)a.k.a.MinimalAlgorithmicInformationLossMethods.
+● Theiterativematchingofgeneratedandrealdataalignswiththeideaof“drilling
+down”throughlayersofcomplexitybyexposingelementarycomponents.
+● Introducing ECA modelling from complex systems reveals attractors, phase
+transitionsandsystemic behaviorsarisingfrom nonlinearinteractionsbetween
+stocks.
+● ECAmodelling complementsexistingapproachesandprovidesanalternative
+lensinto marketcomplexity basedonemergentphenomenafromalgorithmic
+systemstheory.
+● This study introduces a methodology from a different scientific domain of
+complexsystems. Theevolutionoftheautomatapatternsovertimemayreveal
+types of systemic behavior, attractors, or phase transitions not capturedby
+traditional models. Thus it provides an alternative modeling approach and
+analysistoolsettogainnewquantitativeinsightsintomarketdynamics.Itwill
+further boost the capabilities of the generic algorithmic framework as a
+quantitativetoolforthestudyofsystemicandemergentbehaviouroffinancial
+markets.
+Therefore,theproposedstudycouldaddresscurrentgapsbyprovidinganovelwayto
+modelstockdependenciesthatisdynamic,nonlinear,higher-orderandpossiblycausal.
+Thisrepresentsanunderutilizedperspectivewithinthefield.
+
+## 3.Approach:
+
+Weencodestockpricechanges,applycompressiontodenoisedata,simulatepatterns
+using cellular automata, and extract matching causal rules via genetic algorithms.
+Dimensionality reduction minimizes information loss. Block decomposition and
+complexitydistancesquantifymodelfit.Causaldecompositionanalyzesmodularrule
+
+```
+5
+```
+
+interactions. OurPythonnotebookscontainingreproduciblecodearepubliclyavailableat
+[3].Extensiveparametertuningandmultiplemodeliterationsvalidateresultsrigorously.
+
+```
+Thehighlevelstepsare:
+```
+1. Encoderealmarketdata for 8 selectedstocksover 192 daysintoa2Dbinary
+    arraycalledO(observeddata).
+2. UseOastheinitialrowstateforanElementaryCellularAutomata(ECA)model
+    togeneratecandidate2D binaryarrayscalledG(generateddata).Thisapplies
+    ECArulecompositionstoevolveO.
+3. Calculate the algorithmic complexity of O and G arrays using Block
+    DecompositionMethod(BDM).
+4. CompressOandGintominimalarrayswithleastinformationlossusingMinimal
+    AlgorithmicInformationLossMethods(MILS).
+5. Apply a genetic algorithm (EGA) to select ECA rules that minimize the
+    informationdistancebetweencompressedOandGarrays.
+6. AnalyzethepatternsandrelationshipsinGarraysproducedbythebestmatching
+    ECArulestorevealinsightsabouthiddendependenciesintherealmarketOdata.
+7. Quantifythe model fitbetweenrealOandsimulatedGarraysbasedonthe
+    algorithmicinformationlossandcomplexitydistanceaftercompression.
+
+**3.1.Multi-LevelGeneticAlgorithm**
+
+TohandlethelargesearchspaceofallpossibleECArulepaircombinations,amulti-level
+genetic algorithm (GA) is employed. This distributes the problem across multiple
+computationalsystemstoenablescalinguptheexploration.
+
+Thefollowingparametersconfigurethehierarchicalprocess:
+
+```
+NUM_LEVELS= 3
+LEVEL= 0
+BATCH_IDX= 0
+BATCH_SIZES=[10000,500,100]
+BATCH_SIZE=BATCH_SIZES[0]
+```
+```
+● ThereareNUM_LEVELSlevelsinthehierarchy
+● TheprocessstartsatLEVEL 0
+● BATCH_IDXtracksthecurrentbatchnumber
+● BATCH_SIZEScontainsthenumberofrulepairsperbatchforeachlevel
+● BATCH_SIZEissettothecurrentlevel'sbatchsize
+```
+Ateachlevel:
+
+```
+● ThesolutionspaceissplitintobatchesofBATCH_SIZErulepairs
+● Batchesareprocessedindependentlyandinparallelondifferentsystems
+● Periodically,batchsolutionsareaggregatedtothenextlevel
+```
+Thisisdepictedintheflowchartinsection4.2below.
+
+## 4.Methodology:
+
+
+```
+Figure4.1.OverallMethodology
+```
+**4.1.ResearchDesign**
+
+Thisstudyemploys a computational modelingapproach usingelementarycellular
+automata(ECA)tomodelstockmarketdata.ECAcanexhibitcomplexbehaviorfrom
+simplerules,providingpotentialtoemulatemarketcomplexity.Thegoalismatchingreal
+datatoalgorithmicallygenerateddatabasedonECArules.Bothsingleanddoublerule
+ECAconfigurationsweretestedagainsttheobserveddatausingageneticalgorithmto
+identify optimal matches. The best matching rules give insights into the market's
+underlyingdynamics.
+
+**4.2.Multi-levelGA**
+
+```
+7
+```
+
+```
+Figure4.2.OverallMethodology
+```
+Themulti-levelarchitecturepartitionsthefullECArulesearchspaceintosmallerbatches
+thatcanbe processedindependentlyinparallelbyseparateGAinstances.Batchingis
+performedbythemastertaskbasedonenumeratingallrulepairsandsplittingtheminto
+picklefilescontainingasubsetoftheglobalspace.EachparallelGAlevelpersistsits
+statesostoppedjobscanresumeprogress.Onceallbatchesinalevelcomplete,theirtop
+solutionsareconsolidatedintoaunifiedpoolthatformstheinputforthenextlevelupthe
+hierarchy(unlimitednooflevels). Thisrecursivecombiningof thebestresultsfrom
+independentparallel searches allowsmassively scaling upthe global GA througha
+divide-and-conquerapproach,whilehierarchicalreductionfocuseseachnextlevelonthe
+mostpromisingcandidates.
+
+**4.3.DataCollection**
+
+
+ThispubliclyavailablehistoricaldailyclosingpricedataforselectedS&P 500 stocks
+over2018-2023wascollectedfromYahooFinance.Stockswerechosenacrosssectors
+andmarketcapsfordiversity.
+
+**4.4.DataAnalysis**
+
+```
+TherealobservedandECA-simulatedstockdataundergoamulti-stepanalysis:
+Encoding:Dailypricechangedatafor 8 stocksover 192 daysisencodedasbinary
+strings(O).TheECAmodelgeneratescandidatedata(G)basedoninitialconditions
+andruleevolution.The 8 stocksarerandomlyselectedbecausetheyrepresentdiverse
+industriesandsectors.Thepricechangeforeachstockisencodedwith 4 bits, 1 sign
+bitand 3 magnitudebits,altogether 32 bits. 192 daysisselectedbecauseitisa
+multipleof 32 asexplainedbelow.
+```
+```
+Figure4.3.ExampleGeneratedMarketDatabyECARule 22
+```
+```
+Dimensionality Reduction: Each 2D array(Oor G) is compressedto minimize
+informationlossusingMILS,guidedbyageneticalgorithm.GAevolvessolutionsto
+determinewhichrows/colstodelete.
+Complexity Calculation: Algorithmic complexity of each compressed chunk is
+calculatedusingtheBDMapproach.
+RuleMatching:Ageneticalgorithmidentifiessingle,doubleortripleECArulesthat
+minimizecomplexitydistancebetweencompressedreal(O)andECAgenerated2D
+arrays(Gs).
+CausalDecomposition: OncethebestmatchingECAruleisfound,thefollowing
+techniques are applied to break down its emergent complexity into modular
+components(RiedelandZenil21):
+● Prime/compositeruleanalysis: TheECAruleisdecomposedintoprimerules
+implementingcoreoperationsversuscompositerulescomposedofprimerules.
+Thisrevealsthefundamentalbuildingblocks.
+● Minimalrulesetextraction:Thesmallestsetofprimerulescapableofgenerating
+thefullemergentbehaviorisidentified.Thisdistillsthekeycausalinteractions.
+```
+```
+9
+```
+
+```
+● Ruleperturbationanalysis:TheECArulecomponentsareindividuallyperturbed
+toanalyzecausalpropagation.Thisrevealsthemodularcontributions.
+● Coarse-graining: Multi-scale coarse-graining is applied to simplify causal
+dependenciesbetweenrulecomponents.Thisextractsprimarymechanisms.
+Theinteractions between thesesimple modularruleelementsareanalyzedusing
+informationdynamicstouncoverthemechanismsdrivingstockdependencies.
+Evaluation:AfterGAconvergence,thebestECArulesformodellingthemarketdata
+are analyzed qualitativelyand quantitatively. Statistics like compressionrate and
+complexity distanceareusedtoevaluatemodel fit.Visual inspectionalsoallows
+matchingofpatterns.
+```
+The methodology provides insights into algorithmic generative models capable of
+emulatingmarketcomplexity.Implementationcouldpotentiallyutilizesvectorizationand
+parallelizationforperformance.
+
+## 5.Results:
+
+Thesectionsthat followare closelyalignedwiththecorrespondingsectionsinthe
+accompanyingPythonnotebook[3].
+
+**5.1.DataEngineering**
+
+Thesectionsthat followare closelyalignedwiththecorrespondingsectionsinthe
+accompanyingPythonnotebook[3].
+
+```
+● The 8 stockswererandomlyselectedtocoverdiversesectorsandindustries. 32
+bitswaschosenasaconvenientbinarysequencelengthtobeginthisanalysis.
+```
+```
+Figure5.1. 8 SelectedStocksandtheirSectorsandIndustries
+```
+```
+● Dailyclosingpricedatafor 8 selectedstocks(AAPL,BA,CAT,DIS,GE,IBM,
+MSFT,TSLA)over 192 daysfrom2018-2023wascollected.
+```
+
+```
+Figure5.2. 8 SelectedStocksandtheirPricesbetween 2018 and 2023
+```
+● Thedailypricechangeforeachstockwasencodedintoa32-bitbinarystring,
+with 1 bitrepresentingthesignofchangeand 3 bitsformagnitude.
+
+```
+Figure5.3.StockPriceEncodings
+```
+● Thisproduceda2Dbinaryarraywith 192 rowsrepresentingtimelineand 32
+columnsforthe 8 stocks'encodedpricedata.
+
+```
+11
+```
+
+**5.2.ElementaryCellularAutomata(ECA)**
+
+```
+● Elementarycellularautomata(ECA) wereusedtogeneratesimulateddataby
+evolvingtheencodedreal dataasinitialconditionsbasedonECArulesetsof
+singleanddoublerulecomposition
+```
+```
+Figure5.4.Row 1 and 2 CellsGeneratedbyECARule 90
+```
+```
+Figure5.5.CompositionofRules 1 and 2
+```
+**5.3.BlockDecompositionMethod(BDM)**
+
+```
+● BDMwasusedtoestimatethealgorithmiccomplexityandinformationcontentof
+OandGarrays.
+● Thiswas akey component ofthe MILS compressionandgeneticalgorithm
+optimizationsteps.
+```
+**5.4.DimensionalReductionviaMILS**
+
+```
+● TheMILSalgorithmcompressedOandG2D arraysbyremovingredundant
+rows/columnsidentifiedviaageneticalgorithm,whileminimizinginformation
+loss.
+● ThefollowinggraphshowstheinformationcontentofobservedandECARule
+131 generated2Darraysof 192 rowsand 32 columnsbeforeandafterundergoing
+theMILSalgorithm.
+```
+
+```
+Figure5.6.RealvsSimulateddatacompressedto94.95%and403.67%
+```
+```
+Figure5.7.OriginalvsCompressedObservedImage(ontheleft)and
+GeneratedImage(ontheright)
+```
+● Thisdimensionalreductionwasachievedthroughthegeneticalgorithm-guided
+applicationoftheMILScompressionsteps.Byoptimizingsolutionstoretainthe
+maximuminformationcontentateachstep,thealgorithmwasabletoselectively
+removeredundantorlessinformativerowsandcolumnsfromthedatasets.
+
+● Thefollowing graphs show theinformationlossbyrows andcolumns.Row
+lossesgraphshowsthatrowsrangingfrom 0 to 75 havebeenselectedbyGAfor
+deletion. Similarly,columnlossesgraphshowscolumnsrangingfrom 0 to 6 have
+beenselectedbyGAfordeletion.
+
+```
+13
+```
+
+**Figure5.8.Lossvariationacrossimagedimensions**
+
+
+```
+Figure5.9.SortedInformationLossbyRow/Col
+```
+Theabovegraphshowsthesortedinformationlossduetoarow/colintheobserved2D
+arrayduringtheMILSalgorithmexecution.
+
+**Figure5.10.ImagesafterundergoingMILS**
+Theaboveplotshowstheeffectofremovingtherows/colsidentifiedinthe“Sorted
+LossValues”graphaboveinthefirst 9 steps.
+
+**Figure5.10.FitnessValuesEvolutionover 100 Generations**
+Theabovegraphsshowtheevolutionofthebestsolutionintermsofitsfitnessvalue
+over 100 generationsduringMILSexecutionoftheobserved(ontheleft)andgenerated
+(ontheright)2Darrays.
+
+**5.5.GeneticAlgorithmRuleMatching**
+
+```
+● Elementarycellularautomata(ECA) wereusedtogeneratesimulateddataby
+evolvingtheencodedrealdataasinitialconditionsbasedonECArulesets.
+● BothsingleanddoubleruleECAconfigurationsweretestedduringthegenetic
+algorithmoptimization.Theelementaryrule 131 anddoublerulepair(35,115)
+emerged as providing the closest overall match to the real market data
+```
+```
+15
+```
+
+observations,withanaveragealgorithmicsimilarityof~98%basedontheBDM
+complexitymeasure.
+● ThesimplicityyeteffectivenessofRule 131 andRulePair(35,115)suggests
+marketcomplexityemergesfrombasicmodularinteractions.
+
+```
+Figure5.11.FrequencyDistributionofBestSingleRules
+```
+● Figure5.11.showsthe frequencydistributionof bestsinglerule duringearly
+stagesofaGAevolution
+
+
+```
+Figure5.12.FrequencyDistributionofBestDoubleRules(Level1)
+```
+● Figure5.12.shows thefrequencydistributionofbestdoubleruleduringearly
+stagesofaLevel 1 GAevolution
+
+```
+Figure5.13.FrequencyDistributionofBestDoubleRules(Level2)
+```
+● Figure5.13.shows thefrequencydistributionofbestdoubleruleduringearly
+stagesofaLevel 2 GAevolution
+
+```
+17
+```
+
+```
+Figure5.14.ComparisonofObservedvsGeneratedMarketData
+```
+```
+● Figure5.14.shows thecomparisonbetween2DbinaryimagesofObservedvs
+GeneratedorSimulatedmarketdata
+```
+**5.6.CausalDecomposition**
+
+Ongoingworkusingcausal decompositiontechniquesappliedtotheidentifiedbest
+matchingECArulesof131, 35 and 115 togaininsightsintotheunderlyingdriversof
+complexityinthemodeledstockmarketdatahasshownpromisinginitialresults.
+
+Specifically,the frequency distributionof optimalrule pairs foundbythe genetic
+algorithminFigure5.13.aboveshowstheprominenceofthe(103,51)rulepair.This
+providesempiricalevidencethatrules 51 and 103 arelikelycorecausalfactorsgoverning
+themarket'scomplexity,astheyappearrepeatedlyastopsolutions.
+
+● Prime rule analysis on Rule 35 reveals its composition from basicbuilding
+blocks.Asaprimeruleitself,itservesasafundamentalcausaldriver.
+● Rule131/115similarlyrevealsitselementarycomponents.
+● Analyzing the recursive interactions between Rule 35 and Rule 115 using
+perturbationanalysissystematicallydetermineseachrule'smodularcontribution.
+● Coarse-grainingsimplifiesthedependenciesbetweenrules 35 and 115 toextract
+theprimarymechanisms.
+● Theminimalrulesetcapableofgeneratingthekeymarketbehaviorisidentifiedas
+thepair(35,115)basedonitsdominanceinthedistribution.
+In summary, the integrated application of encoding, compression, algorithmic
+matching,andcausal decompositiontechniquesprovedeffectiveindiscoveringhidden
+dependenciesandmodularinteractionsgoverningmarketcomplexity.Theresultsvalidate
+thepromiseofalgorithmicgenerativemodelingcoupledwithinformationdynamicsfor
+gainingnew insights into complexsystemscomparedtotraditionallinearcorrelation
+methods. Ongoing work involves refiningthe techniquesover broaderdatasetsand
+inferringtheelementalmarketmechanismsthroughdeepercausaldecomposition.
+
+
+## 6.Discussion:
+
+**6.1.EffectivenessofMILSCompressionAlgorithm**
+
+TheMILSalgorithmwasabletosignificantlycompressboththerealandsimulated
+datasetswhile retaining over90% of their algorithmiccomplexity onaverage. This
+demonstrates MILS' effectiveness in applying dimension reduction to minimize
+informationloss.Byfocusingonrowsandcolumnswithleastinformationalcontentas
+identifiedby BDM, MILS removed redundancy while preserving key patterns.This
+"denoising"helps isolatealgorithmically structured components and relationshipsfor
+furtheranalysis.
+
+**6.2.IdentificationofUnderlyingMarketDynamics**
+
+WhileRule 131 emergedmost frequently providing aclosequantitativematchto
+observed market data, its characterization as non-prime and non-composite limits
+interpretations.Interactionsundercoarse-grainingofRule131'scomponentscouldstill
+potentiallyreproduceobservedbehaviors,warrantingfurtherinvestigationbeyondRiedel
+andZenil's framework.Futureworkaimstotestbroadermulti-ruleconfigurationsnot
+constrained by prime/composite definitions, which may model complexity more
+accurately.
+
+**6.3.PromiseofAlgorithmicModelingMethods**
+
+Theidentificationofconfigurationscloselyfittingstatisticsemphasizesthevalueof
+algorithmicmodelingandinformationdynamicsinquantitativelycapturingrealsystem
+patterns.Whileinterpretationofspecificmatchingrulesislimited,thesetechniquesshow
+promise inuncovering generative mechanisms whencombined withtheory-grounded
+analysisofcausaldecompositionandcoarse-grainingunderdifferentconceptuallenses.
+Addressingtheoreticalassumptionsandexploringbroaderrepresentationalspacescould
+strengtheninferencesaboutintrinsicdriverrulesandinteractions.
+
+## 7.Conclusion:
+
+Thisstudyexploredtheuseofalgorithmicgenerativemodelingandinformationdynamics
+techniques to analyze encoded stock market data and detect emergent patterns of
+dependencybetweenstocks.ByapplyingMILScompressionandECAruleevolution
+guidedbygeneticalgorithms,keyfindingswereachieved:
+
+```
+● TheMILScompressionalgorithmeffectivelyreduceddatadimensionalitywhile
+preservingalgorithmicinformationcontent.Thisindicatesredundanciesexistin
+bothrealandsimulatedmarketdatasets.
+● Evolutionarytestingidentifiedsimplelow-complexityRule 131 asexhibitingthe
+closestmatchtorealmarketdata,suggestingitmaycaptureinherentsystemic
+dynamics.
+● Alow-complexity cellularautomata double rulepair(35, 115)wasfoundto
+closelyemulatekeydynamicsandpatternsintherealmarketdata.Thisfurther
+supports thepotentialof theintegratedtechniquestoreverseengineermarket
+complexitythroughalgorithmicgenerativemodels.
+● CausaldecompositiontechniquesprovedbeneficialinbreakingdownRule131’s
+emergent complexity into its modulardriversgoverning stock dependencies.
+Analyzinginteractionsbetweentheconstituentcausalrulesprovidedexplanatory
+powerforhowcomplexmarketbehaviorscanarisefromsimplebuildingblocks.
+```
+Overall,the combinedapplicationofalgorithmiccomplexity,minimalinformationloss
+principles,andcausaldecompositionenabledbothdenoisingandmodelingcomplexstock
+
+```
+19
+```
+
+relationshipsinaninformation-theoreticframework.Thetoolsevaluatedholdpromisefor
+advancinginsightsintoemergentphenomenachallengingstandardapproaches.
+
+## 7.LimitationsandFurtherResearch:
+
+This study provided initial evidence cellular automata and evolutionary algorithms
+coupledwithinformationtheorymayeffectivelyuncoverotherwisehiddendependency
+structuresinfinancialdata.These algorithmicgenerativemodelingtechniqueswarrant
+ongoingexplorationforstudyingcomplexityacrossdomains.
+
+Futureresearchcanfurthervalidatetheseresultsoverlargerstocksetsandtimeperiods.
+Additionally,identifyingthe corelow-complexityECArulescapableofproducingthe
+market'scomplex systemic featureswill enableinferring therootcausalmechanisms
+drivingdependencies.Causaldecompositiontechniquessuchasruleperturbationanalysis
+cansystematicallydetermineeachrule'smodularcontribution.
+
+## 8.ProposedNextSteps:
+
+Tobuildonthefindingsandlimitationsidentified,thefollowingnextstepsareplanned:
+
+```
+● CalculatetheBDMcomplexityforlocalregions/patchesoftheinputarrayinstead
+ofthewholearray.Thiswouldcapturelocalizedvariationsincomplexity.
+● IncorporatetripleECAconfigurationsintothegeneticalgorithmoptimizationto
+match against the observed data. This can increase the complexity of the
+generatedimagestopotentiallyimprovematching.
+● Performcausaldecompositionthroughsystematicruleperturbationanalysisto
+uncoverthecoremodularECAmechanismsgeneratingthekeymarketbehavior.
+● Enhancevisualizationofmatchesbetweenrealandsynthesizeddatasetstobetter
+understandgapareasandoptimizetechniques.
+● Explore alternative complexity measures to BDM for improved algorithmic
+informationdistancecalculationsbetweenobservedandsynthesizeddata.
+```
+Thesenextstepswillfocusonstrengtheningvalidationacrossbroaderdatasets,honing
+thekeymechanismsthroughcausaldecomposition,optimizingmatchingaccuracy,and
+addressing identified limitations. This will further advance the goal of effectively
+modelingandexplainingmarketcomplexityusingalgorithmicgenerativetechniques.
+
+## References
+
+[1] Matejka,Justin,andGeorgeFitzmaurice.“SameStats,DifferentGraphs.”Proceedingsofthe 2017 CHI
+ConferenceonHumanFactorsinComputingSystems,2017,https://doi.org/10.1145/3025453.3025912.
+
+[2] Zenil,Hector,etal.“MinimalAlgorithmicInformationLossMethodsforDimensionReduction,Feature
+SelectionandNetworkSparsification.”arXiv.Org, 9 Apr.2023,arxiv.org/abs/1802.05843v10.
+
+[3] Mak, Y. W. "High-Order-Stocks-Dependencies" version 0.3, 2023. Github,
+https://github.com/algoplexity/High-Order-Stocks-Dependencies/blob/main/MScFE_690_G3614_2n1R
+ules.ipynb
+
+[4] Riedel,Jürgen,andHectorZenil.“RulePrimality,MinimalGeneratingSets,Turing-Universalityand
+Causal Decomposition in Elementary Cellular Automata.” _arXiv.Org_ , 24 Feb. 2018,
+arxiv.org/abs/1802.08769.
+
+
